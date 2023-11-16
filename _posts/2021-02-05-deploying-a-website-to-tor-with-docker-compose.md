@@ -6,15 +6,11 @@ date: 2021-02-05
 tags: [tor, docker, docker-compose, blog]
 ---
 
-While writing this blog on Github Pages, it crossed my mind that it would be a fun exercise to also self-host it on Tor.
-
-The reason for this is because I've generally found most of the content on Tor boring, with very little to do unless someone already has a goal (usually illicit) in mind. This is really unfortunate, because the technology to make a network like Tor possible is super interesting, especially the techniques used to thwart bad actors. Hopefully, posts like this will help normalize running regular websites on it, which has the benefits of not having to pay for a domain name _and_ avoids the (lack of) privacy implications when running a personal webserver locally.
-
 In this post, I'll be covering how I use `docker-compose` to spin up Tor, a network-isolated webserver, and a monitoring tool called [Nyx](https://nyx.torproject.org/) all in their own separate containers. It'll be used to host this blog on Tor.
 
 While I take a lot of steps to make this setup as locked-down as possible, I don't make any claims to security. There may be (and very possibly are) a few glaring misconfigurations or bad assumptions that compromise Tor in a serious way, so don't take this guide as a way to hide from state-sponsored actors ;).
 
-If you notice anything like that and feel like letting me know, please open an Issue for this blog post on [my Github!](https://github.com/devedge/devedge.github.io/issues)
+If you notice anything like that and feel like letting me know, please open an Issue for this blog post on [my Github.](https://github.com/devedge/devedge.github.io/issues)
 
 The Tor version of this blog is hosted at:
 
@@ -272,7 +268,7 @@ Recreating the webserver is easy to do, and doesn't require restarting either th
 
 and then recreate it:
 
-`$ docker-compose up --detach --force-recreate webserver`
+`$ docker-compose up --detach --force-recreate --no-deps webserver`
 
 ## Nyx Container
 
