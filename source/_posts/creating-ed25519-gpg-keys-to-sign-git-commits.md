@@ -13,6 +13,7 @@ As a result, we'll be generating:
 
 - A master key with no expiration date, which can be used to certify any new subkeys
 - A subkey for signing, with an expiration date of 5 years
+- (_optionally_) An encryption key for future use
 
 ## first things first
 
@@ -67,173 +68,62 @@ You could also install another program, `pinentry-mac`, but this will open up an
 
 ## generating the gpg keys
 
-Many guides still show how to generate RSA keys. The modern alternative for a while has been ED25519, but GPG hides it in the advanced key generation options. To use it, start with:
+Many guides still show how to generate RSA keys. However, the modern alternative for a while has been ED25519. To use it, run:
 
 ### master key
 
 ```bash
-gpg --full-generate-key --expert
+gpg --quick-generate-key '<User ID>' ed25519 cert never
 ```
 
-This will ask you to pick a specific key. Type '11' to use ECC and manually select capabilities.
+This generates a Certify-only (`cert`) `ed25519` key that `never` expires.
+
+The `<User ID>` can generally be anything. The standard format follows the convention of:
+
+`
+Your Name (comment) <your.email@address.com>
+`
+
+However, keep in mind that for commits to appear as valid on websites such as Github, you need to include an email that matches one of your verified Github emails. The angle brackets surrounding the email (`< >`) are required.
+
+Once you hit Enter, it'll ask you to provide a password. If you followed the configuration steps in the first section, it'll only ask for it once, so be sure to type/paste it correctly.
+
+GPG will then print the new key:
 
 ```
-Please select what kind of key you want:
-   (1) RSA and RSA
-   (2) DSA and Elgamal
-   (3) DSA (sign only)
-   (4) RSA (sign only)
-   (7) DSA (set your own capabilities)
-   (8) RSA (set your own capabilities)
-   (9) ECC (sign and encrypt) *default*
-  (10) ECC (sign only)
-  (11) ECC (set your own capabilities)
-  (13) Existing key
-  (14) Existing key from card
-Your selection? 11
+pub   ed25519 2024-12-20 [C]
+      55BE5089F634003042AE70985E88702C976C97B1
+uid           [ultimate] Richard H. Pajerski II (devedge) <richard.pjski2@proton.me>
 ```
 
-Next (and confusingly), GPG is telling you that the key will have Sign and Certify capabilities by default. To disable or enable them, you can 'toggle' the capability by typing the letter next to the listed entry. 
-
-Type 'S' and hit Enter to disable the Sign capability. This will leave the key with only the Certify capability, so you can type 'Q' to finish this step.
-
-```
-Possible actions for this ECC key: Sign Certify Authenticate
-Current allowed actions: Sign Certify
-
-   (S) Toggle the sign capability
-   (A) Toggle the authenticate capability
-   (Q) Finished
-
-Your selection? S
-
-Possible actions for this ECC key: Sign Certify Authenticate
-Current allowed actions: Certify
-
-   (S) Toggle the sign capability
-   (A) Toggle the authenticate capability
-   (Q) Finished
-
-Your selection? Q
-```
-
-Then, GPG provides a list of curve algorithms to pick. The default is the desired one, Curve 25519.
-
-```
-Please select which elliptic curve you want:
-   (1) Curve 25519 *default*
-   (2) Curve 448
-   (3) NIST P-256
-   (4) NIST P-384
-   (5) NIST P-521
-   (6) Brainpool P-256
-   (7) Brainpool P-384
-   (8) Brainpool P-512
-   (9) secp256k1
-Your selection? 1
-```
-
-You can specify when the key will expire. Generally, since GPG relies on a 'web of trust' where people hold onto your key for a long time, you want your root level key to rarely expire. It will also have no abilities, existing solely to sign subkeys that you actually use for day-to-day work.
-
-Some leave it at 10 years, you can also make it never expire.
-
-```
-Please specify how long the key should be valid.
-         0 = key does not expire
-      <n>  = key expires in n days
-      <n>w = key expires in n weeks
-      <n>m = key expires in n months
-      <n>y = key expires in n years
-Key is valid for? (0)
-Key does not expire at all
-Is this correct? (y/N) y
-```
-
-At the penultimate step, GPG asks you to fill out an identity. You can go all out here or just specify your username - but keep in mind that for commits to appear as valid on websites such as Github, the email here must match one of your verified Github emails.
-
-```
-GnuPG needs to construct a user ID to identify your key.
-
-Real name: Richard H. Pajerski II
-Email address: richard.pjski2@proton.me
-Comment: devedge
-You selected this USER-ID:
-    "Richard H. Pajerski II (devedge) <richard.pjski2@proton.me>"
-
-Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit? O
-```
-
-Finally, it'll ask you to provide a password. If you followed the configuration steps in the first section, it'll only ask for it once, so be sure to type/paste it correctly.
+The `[C]` stands for Certify. Generally, since GPG relies on a 'web of trust' where people hold onto your key for a long time, you want your root level key to rarely expire. It will also have no abilities, existing solely to sign subkeys that you actually use for day-to-day work.
 
 ### signing key
 
-The signing key is a subkey of the master key, and they are both logically considered part of the same GPG key. To edit your existing key that you just created and add a subkey, run:
+The signing key is a subkey of the master key, and they are both logically considered part of the same GPG key.
 
 ```bash
-gpg --expert --edit-key devedge
+gpg --quick-add-key 55BE5089F634003042AE70985E88702C976C97B1 ed25519 sign 5y
 ```
 
-A new prompt will appear, with the `gpg>` prefix. Type `addkey` and hit Enter:
+This generates a Sign-only (`sign`) `ed25519` key that expires in 5 years (`5y`). The `55BE5...` string is the master key's full fingerprint, which was printed above.
 
-```
-gpg> addkey
-```
 
-Select `(11) ECC (set your own capabilities)` for the encryption algorithm, same as the first.
+To continue signing after this time has passed, you'll need to generate a new subkey again with the master key. The idea behind this is that if you've had your key copied/stolen somehow, it can't be used forever.
 
-However, the key capabilities should already just be signing, so you can automatically select 'Q':
+#### _Note on ed25519 encryption_
 
-```
-Current allowed actions: Sign
+Adding an encryption key involves a very small change: instead of `ed25519`, you'll need to specify `cv25519` for the encryption algorithm:
 
-   (S) Toggle the sign capability
-   (A) Toggle the authenticate capability
-   (Q) Finished
-
-Your selection? Q
+```bash
+gpg --quick-add-key 55BE5089F634003042AE70985E88702C976C97B1 cv25519 encr 5y
 ```
 
-The elliptic curve will be the same, `(1) Curve 25519 *default*`.
+## listing keys
 
-Next, you can specify the desired key validity time. To continue signing after this time has passed, you'll need to generate a new subkey again with the master key. The idea behind this is that if you've had your key copied/stolen somehow, it can't be used forever. However, in practice, if someone has enough access to your PC that they've got your GPG keys, you usually have much bigger problems to worry about.
+While there's numerous ways to list your keys, I've found that you generally don't need to worry about most of them. Regardless of how many subkeys your GPG key has, referencing either the master key's ID or any part of your UID will allow GPG to pick the appropriate subkey. If you have multiple subkeys with the same function, GPG picks the most recently created one.
 
-I've set my expiry date to 5 years.
-
-```
-Please specify how long the key should be valid.
-         0 = key does not expire
-      <n>  = key expires in n days
-      <n>w = key expires in n weeks
-      <n>m = key expires in n months
-      <n>y = key expires in n years
-Key is valid for? (0) 5y
-Key expires at Tue Dec 18 20:29:05 2029 EST
-Is this correct? (y/N) y
-Really create? (y/N) y
-```
-
-This will create the key and automatically print info for both keys. The top section, marked with `sec` for Secret Key and `usage: C` for Certify, is the master key. Its key fingerprint is `5E88702C976C97B1`. The lower section, marked with `ssb` for the Subkey certified by the master key, has `usage: S` for Signing and has a fingerprint of `882630A8E2F9526B`.
-
-```
-sec  ed25519/5E88702C976C97B1
-     created: 2024-12-20  expires: never       usage: C
-     trust: ultimate      validity: ultimate
-ssb  ed25519/882630A8E2F9526B
-     created: 2024-12-20  expires: 2029-12-19  usage: S
-[ultimate] (1). Richard H. Pajerski II (devedge) <richard.pjski2@proton.me>
-```
-
-To apply the changes, be sure to type `save` and hit enter. This also automatically quits the pseudo-prompt, so either be sure to finish completing all your changes, or you'll have to re-enter the key editor with the command at the top of this subsection.
-
-```
-gpg> save
-```
-
-## list your keys
-
-There are endless ways to list your keys and all the information they provide, but I've found that you generally don't need to worry about most of it. Regardless of how many subkeys your GPG key has, referencing either the master key's ID or any part of your UID will allow GPG to pick the appropriate subkey. If you have multiple subkeys with the same function, GPG picks the most recently created one.
-
-However, here's a few commands that I've found useful:
+However, here's a few I've found useful:
 
 The default:
 
@@ -245,39 +135,31 @@ pub   ed25519 2024-12-20 [C]
       55BE5089F634003042AE70985E88702C976C97B1
 uid           [ultimate] Richard H. Pajerski II (devedge) <richard.pjski2@proton.me>
 sub   ed25519 2024-12-20 [S] [expires: 2029-12-19]
+sub   cv25519 2024-12-29 [E] [expires: 2029-12-28]
 ```
 
 Same as above, but with the master key ID split into 4-character chunks:
+
 ```
 $ gpg --fingerprint devedge
-[keyboxd]
----------
 pub   ed25519 2024-12-20 [C]
       55BE 5089 F634 0030 42AE  7098 5E88 702C 976C 97B1
 uid           [ultimate] Richard H. Pajerski II (devedge) <richard.pjski2@proton.me>
 sub   ed25519 2024-12-20 [S] [expires: 2029-12-19]
+sub   cv25519 2024-12-29 [E] [expires: 2029-12-28]
 ```
 
-List your key with all its subkey fingerprints:
+You can also go all-out and list each of the subkey fingerprints:
 
 ```
-$ gpg --list-keys --with-subkey-fingerprints devedge
-pub   ed25519 2024-12-20 [C]
-      55BE5089F634003042AE70985E88702C976C97B1
-uid           [ultimate] Richard H. Pajerski II (devedge) <richard.pjski2@proton.me>
-sub   ed25519 2024-12-20 [S] [expires: 2029-12-19]
-      AE9E8E56437D11587FAFE840882630A8E2F9526B
-```
-
-Running the same command as above but with `--keyid-format LONG` adds the shortened fingerprint right after the algorithm, eg. `ed25519/5E88702C976C97B1`:
-
-```
-$ gpg --list-keys --with-subkey-fingerprints --keyid-format LONG devedge
+$ gpg --list-keys --with-subkey-fingerprints --keyid-format=LONG devedge
 pub   ed25519/5E88702C976C97B1 2024-12-20 [C]
       55BE5089F634003042AE70985E88702C976C97B1
 uid                 [ultimate] Richard H. Pajerski II (devedge) <richard.pjski2@proton.me>
 sub   ed25519/882630A8E2F9526B 2024-12-20 [S] [expires: 2029-12-19]
       AE9E8E56437D11587FAFE840882630A8E2F9526B
+sub   cv25519/258ADE692963C5B3 2024-12-29 [E] [expires: 2029-12-28]
+      1C3C6C37E6E0248E5B54C0E8258ADE692963C5B3
 ```
 
 Finally, to export your public key in ASCII plaintext to share, run:
@@ -297,9 +179,19 @@ rnCYXohwLJdsl7EFAmdkyC0CGwIFCQlmAYAAgQkQXohwLJdsl7F2IAQZFgoAHRYh
 BK6ejlZDfRFYf6/oQIgmMKji+VJrBQJnZMgtAAoJEIgmMKji+VJrb+UA/iIF0zAc
 LFKQbhzP6lY8GHfKd5mWKk2pjqG3E8HAErPlAP9MxH+qIF3FlpQB95Kog/oUh3EI
 hX9M+helqM8mMhGBBv9dAQCl2jqJrrJY9py53LejlLZ0pzTwDQA7FdzoHWz/UJF7
-+QEAosZC3I3kQD/pmIzupZbwROyDjYp4utqlPOS3uCC4PQg=
-=j1+T
++QEAosZC3I3kQD/pmIzupZbwROyDjYp4utqlPOS3uCC4PQi4OARncU/0EgorBgEE
+AZdVAQUBAQdA3Bs/kDcYB3WVD+V2uk7L5w0968NSvgjmpPgMrv1ScBkDAQgHiH4E
+GBYKACYWIQRVvlCJ9jQAMEKucJheiHAsl2yXsQUCZ3FP9AIbDAUJCWYBgAAKCRBe
+iHAsl2yXsU12AP46i6XmHRcWJY6vMI36F0LLXfe/IyaFNFI28vA4iQeV/AEAvqAi
+5/yO7vn/NItgMIfqC84ZeDirypv7f3y3LQq3xwU=
+=ubLP
 -----END PGP PUBLIC KEY BLOCK-----
+```
+
+Or directly exported to a file:
+
+```bash
+gpg --armor --export --output devedge.asc devedge
 ```
 
 ## signing commits with them
