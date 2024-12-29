@@ -272,7 +272,7 @@ sub   ed25519 2024-12-20 [S] [expires: 2029-12-19]
 Running the same command as above but with `--keyid-format LONG` adds the shortened fingerprint right after the algorithm, eg. `ed25519/5E88702C976C97B1`:
 
 ```
-gpg --list-keys --with-subkey-fingerprints --keyid-format LONG devedge
+$ gpg --list-keys --with-subkey-fingerprints --keyid-format LONG devedge
 pub   ed25519/5E88702C976C97B1 2024-12-20 [C]
       55BE5089F634003042AE70985E88702C976C97B1
 uid                 [ultimate] Richard H. Pajerski II (devedge) <richard.pjski2@proton.me>
@@ -325,7 +325,7 @@ git config --local user.signingkey richard.pjski2@proton.me
 You could also (confusingly) specify the key fingerprint or full key ID of either the master key or the signing key:
 
 ```bash
-# master key fingerprint (last 16 digits of full key ID)
+# master key fingerprint (last 16 characters of full key ID)
 git config --local user.signingkey 5E88702C976C97B1
 
 # full master key ID
