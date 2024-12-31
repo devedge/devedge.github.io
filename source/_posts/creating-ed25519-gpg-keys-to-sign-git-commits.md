@@ -15,6 +15,16 @@ As a result, we'll be generating:
 - A subkey for signing, with an expiration date of 5 years
 - (_optionally_) An encryption key for future use
 
+## tl;dr
+
+```bash
+export KEYUID='Richard H. Pajerski II (devedge) <richard.pjski2@proton.me>'
+gpg --quick-generate-key "$KEYUID" ed25519 cert never
+gpg --quick-add-key KEYFINGERPRINTFROMABOVE ed25519 sign 5y
+git config --local user.signingkey devedge
+git config --local commit.gpgsign true
+```
+
 ## first things first
 
 The system and version I'm running is:
