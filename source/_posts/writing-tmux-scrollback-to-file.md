@@ -1,6 +1,7 @@
 ---
 title: writing tmux scrollback to file
-tags: tmux
+tags:
+    - tmux
 date: 2025-05-03 22:55:37
 ---
 
@@ -68,6 +69,8 @@ Save the buffer that was just calculated into the filename, using the variable `
 ```
  ; save-buffer %1 ; delete-buffer'
 ```
+
+---
 
 ## references
 

@@ -18,7 +18,7 @@ As a result, we'll be generating:
 ## tl;dr
 
 ```bash
-export KEYUID='Richard H. Pajerski II (devedge) <richard.pjski2@proton.me>'
+export KEYUID='Firstname Lastname (devedge) <firstname.lastname@email.com>'
 gpg --quick-generate-key "$KEYUID" ed25519 cert never
 gpg --quick-add-key KEYFINGERPRINTFROMABOVE ed25519 sign 5y
 git config --local user.signingkey devedge
@@ -103,7 +103,7 @@ GPG will then print the new key:
 ```
 pub   ed25519 2024-12-20 [C]
       55BE5089F634003042AE70985E88702C976C97B1
-uid           [ultimate] Richard H. Pajerski II (devedge) <richard.pjski2@proton.me>
+uid           [ultimate] Firstname Lastname (devedge) <firstname.lastname@email.com>
 ```
 
 The `[C]` stands for Certify. Generally, since GPG relies on a 'web of trust' where people hold onto your key for a long time, you want your root level key to rarely expire. It will also have no abilities, existing solely to sign subkeys that you actually use for day-to-day work.
@@ -143,7 +143,7 @@ $ gpg --list-keys devedge
 ---------
 pub   ed25519 2024-12-20 [C]
       55BE5089F634003042AE70985E88702C976C97B1
-uid           [ultimate] Richard H. Pajerski II (devedge) <richard.pjski2@proton.me>
+uid           [ultimate] Firstname Lastname (devedge) <firstname.lastname@email.com>
 sub   ed25519 2024-12-20 [S] [expires: 2029-12-19]
 sub   cv25519 2024-12-29 [E] [expires: 2029-12-28]
 ```
@@ -154,7 +154,7 @@ Same as above, but with the master key ID split into 4-character chunks:
 $ gpg --fingerprint devedge
 pub   ed25519 2024-12-20 [C]
       55BE 5089 F634 0030 42AE  7098 5E88 702C 976C 97B1
-uid           [ultimate] Richard H. Pajerski II (devedge) <richard.pjski2@proton.me>
+uid           [ultimate] Firstname Lastname (devedge) <firstname.lastname@email.com>
 sub   ed25519 2024-12-20 [S] [expires: 2029-12-19]
 sub   cv25519 2024-12-29 [E] [expires: 2029-12-28]
 ```
@@ -165,7 +165,7 @@ You can also go all-out and list each of the subkey fingerprints:
 $ gpg --list-keys --with-subkey-fingerprints --keyid-format=LONG devedge
 pub   ed25519/5E88702C976C97B1 2024-12-20 [C]
       55BE5089F634003042AE70985E88702C976C97B1
-uid                 [ultimate] Richard H. Pajerski II (devedge) <richard.pjski2@proton.me>
+uid                 [ultimate] Firstname Lastname (devedge) <firstname.lastname@email.com>
 sub   ed25519/882630A8E2F9526B 2024-12-20 [S] [expires: 2029-12-19]
       AE9E8E56437D11587FAFE840882630A8E2F9526B
 sub   cv25519/258ADE692963C5B3 2024-12-29 [E] [expires: 2029-12-28]
@@ -221,7 +221,7 @@ To specify your new key for that repository, run one of the following:
 git config --local user.signingkey devedge
 
 # a different example using the email instead
-git config --local user.signingkey richard.pjski2@proton.me
+git config --local user.signingkey firstname.lastname@email.com
 ```
 
 You could also (confusingly) specify the key fingerprint or full key ID of either the master key or the signing key:
