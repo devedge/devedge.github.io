@@ -167,6 +167,8 @@ While a bit inelegant, I re-aliased `man` such that it forces it to use an ASCII
 alias man="LC_CTYPE=C man"
 ```
 
+---
+
 ## references
 
 - https://www.mankier.com/
