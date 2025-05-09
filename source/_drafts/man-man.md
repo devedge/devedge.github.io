@@ -1,38 +1,10 @@
 ---
 title: man man
 tags:
-    - manpages
-    - shell configuration
+    - manpage
 ---
 
-Manpages are often underutilized, despite their usefulness. After spending some time researching them further, here are some takeaways and modifications that significantly improve my usage of them.
-
-
-## manpages on macOS
-
-If you've noticed that your `man` does not have a status prompt at the bottom of your terminal, it's likely that you're using the bundled version of `man` on macOS.
-
-Bundled:
-
-
-Modern:
-
-
-The default version of `man` installed on macOS is frequently out of date and based on BSD. The more modern implementation that is normally seen on Linux machines is not `man`, but [another implementation called `man-db`](https://man-db.gitlab.io/man-db/).
-
-Installation can be done through [Homebrew](https://brew.sh):
-
-```bash
-brew install man-db
-```
-
-However, this will be installed as `gman` to avoid breaking compatibilty with your default installation of  `man`. To make it your default, export the path & its manpath in your shell configuration file, eg., `~/.zshrc`:
-
-```bash
-export PATH="/opt/homebrew/opt/man-db/libexec/bin:$PATH"
-export MANPATH="/opt/homebrew/opt/man-db/libexec/man:$MANPATH"
-```
-
+Manpages are something I've often underutilized, despite how useful they are. After spending some time researching them further, here are some takeaways and modifications that significantly improve my usage.
 
 ## using the pager
 
@@ -69,7 +41,6 @@ The search line automatically uses regex, so special charaters such as `^` (star
 
 To escape out of any of these prompts, use backspace to reset the search line (instead of frantically hitting `q` and `Escape` like I often do ;) )
 
-
 ## customizing the pager
 
 As nice as the above commands are, there are a few command line flags you can pass to `less` to make it play better and avoid using so many of them:
@@ -86,7 +57,6 @@ export MANPAGER="less --ignore-case --use-color --wordwrap --status-line --lessk
 ```
 
 The last two flags are covered in the next two sections respectively:
-
 
 ## advanced usage with marks
 
@@ -111,7 +81,6 @@ There is more you can do with marks, but I haven't found them particularly helpf
 - `<ESC>ma` - clears the mark `a`
 - `--save‐marks` - when specified in the `less` options, this saves the marks even when you close the file
 
-
 ## searching cli flags
 
 This following configuration has become invaluable for me on a daily basis. I find myself constantly searching for CLI flags (eg., `-f`) and getting results somewhere in the middle of an explanation section instead of the actual flag. A user on StackOverflow provided an [excellent solution](https://superuser.com/a/1731762) to this problem.
@@ -132,7 +101,6 @@ To use this, type `⌥f` (Option+f) or `<ALT>f`. You'll immediately jump to the 
 
 Type the flag letter or the name of the full flag, eg., `s` or `case` - there's no need to prepend the dash `-` - and hit `<ENTER>` to jump to the definition.
 
-
 ## searching everything `man`
 
 To do a full text search of all manpages, use the `-K`/`--global-apropos` flag:
@@ -148,13 +116,36 @@ for every single entry, one at a time, looking like this:
 
 A bit inconvenient, so I may find a workaround eventually.
 
-
 ## tldr
 
 Despite all the above, sometimes you don't want to trawl through a manpage for minutes to piece together a comprehensive command, flag-by-flag. In that case, the [`tldr` project](https://tldr.sh/) gives you a short synopsis and a list of example commands instead.
 
 While the front page instructions recommend installing it through `npm`, thankfully there's a [client written in Rust called `tlrc`](https://github.com/tldr-pages/tlrc). It's available through Homebrew with `brew install tlrc` (be sure to update the `tldr` database with a `tldr -u` before using).
 
+## manpages on macOS
+
+If you've noticed that your `man` does not have a status prompt at the bottom of your terminal, it's likely that you're using the bundled version of `man` on macOS.
+
+Bundled:
+
+
+Modern:
+
+
+The default version of `man` installed on macOS is frequently out of date and based on BSD. The more modern implementation that is normally seen on Linux machines is not `man`, but [another implementation called `man-db`](https://man-db.gitlab.io/man-db/).
+
+Installation can be done through [Homebrew](https://brew.sh):
+
+```bash
+brew install man-db
+```
+
+However, this will be installed as `gman` to avoid breaking compatibilty with your default installation of  `man`. To make it your default, export the path & its manpath in your shell configuration file, eg., `~/.zshrc`:
+
+```bash
+export PATH="/opt/homebrew/opt/man-db/libexec/bin:$PATH"
+export MANPATH="/opt/homebrew/opt/man-db/libexec/man:$MANPATH"
+```
 
 ## strange bugs with hyphens
 
