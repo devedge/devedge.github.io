@@ -1,5 +1,5 @@
 ---
-title: PGP
+title: GPG
 date: 2024-12-29 08:42:05
 ---
 

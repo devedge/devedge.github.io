@@ -6,7 +6,7 @@ nav:
   category: Category
   projects: Projects
   search: Search
-  pgp: PGP
+  gpg: GPG
 
 icons:
   menu: Menu
