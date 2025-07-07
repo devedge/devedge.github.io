@@ -36,7 +36,7 @@ zfs snapshot %I@autosnapshot-1-day-ago
 
 Conveniently, systemd units have the `ExecStartPre` directive in the `[Service]` section, allowing for commands to be run before the actual target command., eg., the latest snapshot. 
 
-Additionally, it is possible to prepend the entire command with a `-`, which prevents the unit from failing if the command fails. This is great for a first-time run where none of the previous snapshots exist, causing the ZFS command to fail.
+Additionally, it is possible to prepend the entire command with a `-`, which prevents the unit from failing if the command fails. This is great for a first-time run where none of the previous snapshots exist, causing the ZFS commands to fail.
 
 Finally, this unit file has the ability to pause snapshots instantly. This is done by requiring a specific path _not_ exist with a negated `ConditionPathExists`:
 
@@ -115,7 +115,7 @@ Or in one command:
 
 ```bash
 sudo systemctl enable --now "zfs-7-daily-autosnapshots@$(systemd-escape 'pool-1/dataset-2').timer"
-``
+```
 
 The timer unit file will use `%i` to enable the respective unit service file with the escaped string. However, the service will use the unescaped string with `%I` to run the ZFS snapshot commands.
 
