@@ -61,7 +61,7 @@ archive:
 # Options:
 #   - show_updated: show the last modification date.
 post:
-  show_updated: true
+  show_updated: false
 
 # Customize the copyright years
 # Note: if start_year/end_year not provided, will use current year.
