@@ -36,7 +36,7 @@ zfs snapshot %I@autosnapshot-1-day-ago
 
 Conveniently, systemd units have the `ExecStartPre` directive in the `[Service]` section, allowing for commands to be run before the actual target command., eg., the latest snapshot. 
 
-Additionally, it is possible to prepend the entire command with a `-`, which will not fail the unit if the command fails. This is great for a first-time run where none of the previous snapshots exist, causing the ZFS command to fail.
+Additionally, it is possible to prepend the entire command with a `-`, which prevents the unit from failing if the command fails. This is great for a first-time run where none of the previous snapshots exist, causing the ZFS command to fail.
 
 Finally, this unit file has the ability to pause snapshots instantly. This is done by requiring a specific path _not_ exist with a negated `ConditionPathExists`:
 
@@ -67,6 +67,7 @@ ExecStartPre=-/sbin/zfs rename %I@autosnapshot-5-days-ago %I@autosnapshot-6-days
 ExecStartPre=-/sbin/zfs rename %I@autosnapshot-4-days-ago %I@autosnapshot-5-days-ago
 ExecStartPre=-/sbin/zfs rename %I@autosnapshot-3-days-ago %I@autosnapshot-4-days-ago
 ExecStartPre=-/sbin/zfs rename %I@autosnapshot-2-days-ago %I@autosnapshot-3-days-ago
+ExecStartPre=-/sbin/zfs rename %I@autosnapshot-1-day-ago %I@autosnapshot-2-days-ago
 ExecStart=/sbin/zfs snapshot %I@autosnapshot-1-day-ago
 ```
 
@@ -107,10 +108,14 @@ pool\x2d1-dataset\x2d2
 This is the safely escaped ZFS path, and the timer can be enabled by using it:
 
 ```bash
-$ sudo systemctl enable --now 'zfs-7-daily-autosnapshots@pool\x2d1-dataset\x2d2.timer'
-# or in one command:
-$ sudo systemctl enable --now "zfs-7-daily-autosnapshots@$(systemd-escape 'pool-1/dataset-2').timer"
+sudo systemctl enable --now 'zfs-7-daily-autosnapshots@pool\x2d1-dataset\x2d2.timer'
 ```
+
+Or in one command:
+
+```bash
+sudo systemctl enable --now "zfs-7-daily-autosnapshots@$(systemd-escape 'pool-1/dataset-2').timer"
+``
 
 The timer unit file will use `%i` to enable the respective unit service file with the escaped string. However, the service will use the unescaped string with `%I` to run the ZFS snapshot commands.
 
