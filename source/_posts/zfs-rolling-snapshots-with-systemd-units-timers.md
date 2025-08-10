@@ -46,7 +46,13 @@ ConditionPathExists=!/home/gadget/pause-snapshots
 
 Pausing is as simple as a `touch ~/pause-snapshots`, and once the file is deleted, snapshots resume whenever the timer triggers the unit file again. This could even be used to pause multiple (or all) autosnapshots on a system if they are all pointed to the same file.
 
-### zfs-7-daily-autosnapshots@.service
+The filename format of the unit file is:
+
+```
+zfs-autosnapshot-<number of retained snapshots>-<frequency>@.service
+```
+
+### zfs-autosnapshot-7-daily@.service
 
 ```ini
 [Unit]
@@ -75,9 +81,9 @@ The remainder of the directives were taken from the `zfs-scrub@.service` bundled
 
 ## timer file
 
-The timer is even simpler. The `OnCalendar` directive is set to `daily`, and the variable window of time when it runs is reduced to 10 seconds from the default of 1 minutes using `AccuracySec`:
+The timer is even simpler, with the only customization being the `OnCalendar` directive set to `daily`:
 
-### zfs-7-daily-autosnapshots@.timer
+### zfs-autosnapshot-7-daily@.timer
 
 ```ini
 [Unit]
@@ -85,8 +91,7 @@ Description=Keep 7 rotating snapshots of %I daily
 
 [Timer]
 OnCalendar=daily
-AccuracySec=10seconds
-Unit=zfs-7-daily-autosnapshots@%i.service
+Unit=zfs-autosnapshot-7-daily@%i.service
 
 [Install]
 WantedBy=timers.target
@@ -101,20 +106,20 @@ Luckily, systemd has a way to handle this: `systemd-escape`, and the variables `
 First, pass the full ZFS path to `systemd-escape`:
 
 ```bash
-$ systemd-escape "pool-1/dataset-2"
-pool\x2d1-dataset\x2d2
+$ systemd-escape "pool-1/dataset2"
+pool\x2d1-dataset2
 ```
 
 This is the safely escaped ZFS path, and the timer can be enabled by using it:
 
 ```bash
-sudo systemctl enable --now 'zfs-7-daily-autosnapshots@pool\x2d1-dataset\x2d2.timer'
+sudo systemctl enable --now 'zfs-autosnapshot-7-daily@pool\x2d1-dataset2.timer'
 ```
 
 Or in one command:
 
 ```bash
-sudo systemctl enable --now "zfs-7-daily-autosnapshots@$(systemd-escape 'pool-1/dataset-2').timer"
+sudo systemctl enable --now "zfs-autosnapshot-7-daily@$(systemd-escape 'pool-1/dataset2').timer"
 ```
 
 The timer unit file will use `%i` to enable the respective unit service file with the escaped string. However, the service will use the unescaped string with `%I` to run the ZFS snapshot commands.
@@ -128,5 +133,13 @@ systemctl list-timers
 And the snapshots, their creation dates, and the amount of space they use can be listed with:
 
 ```bash
-zfs list -t snapshot -o name,creation,used
+$ zfs list -t snapshot -o name,creation,used
+NAME                                                        CREATION                USED
+pool-1/dataset2@autosnapshot-7-days-ago                     Sun Aug  3  0:00 2025     0B
+pool-1/dataset2@autosnapshot-6-days-ago                     Mon Aug  4  0:00 2025     0B
+pool-1/dataset2@autosnapshot-5-days-ago                     Tue Aug  5  0:00 2025     0B
+pool-1/dataset2@autosnapshot-4-days-ago                     Wed Aug  6  0:00 2025   432K
+pool-1/dataset2@autosnapshot-3-days-ago                     Thu Aug  7  0:00 2025     0B
+pool-1/dataset2@autosnapshot-2-days-ago                     Fri Aug  8  0:00 2025     0B
+pool-1/dataset2@autosnapshot-1-day-ago                      Sat Aug  9  0:00 2025     0B
 ```
