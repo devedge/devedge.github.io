@@ -72,7 +72,7 @@ Save the buffer that was just calculated into the filename, using the variable `
 
 ---
 
-## references
+## resources
 
 - tmux official Wiki
     https://github.com/tmux/tmux/wiki
