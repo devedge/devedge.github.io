@@ -53,7 +53,7 @@ After=network.target
 User=node_exporter
 Group=node_exporter
 Type=exec
-Restart=unless-stopped
+Restart=always
 ExecStart=/usr/local/bin/node_exporter --web.listen-address="0.0.0.0:9100"
 
 [Install]
