@@ -5,37 +5,32 @@ tags:
     - gpg
 ---
 
-While there's plenty of guides that try to give a full rundown of GPG and how it works, this is just a straightforwards breakdown for creating and using a new GPG key using proper modern defaults (the long breakdown may come later).
+Git provides the ability to sign your commits with a GPG key. I felt this could be a fun thing to start doing, and since I've had trouble finding simple guides for doing this specifically with ed25519 keys, I'm writing my own.
 
-What GPG is used for in Git is _signing_ commits. No encryption/decryption necessary.
+---
 
-As a result, we'll be generating:
-
-- A master key with no expiration date, which can be used to certify any new subkeys
-- A subkey for signing, with an expiration date of 5 years
-- (_optionally_) An encryption key for future use
-
-## tl;dr
+_If you're just looking for a quick summary of the commands, here they are:_
 
 ```bash
-export KEYUID='Firstname Lastname (devedge) <firstname.lastname@email.com>'
+export KEYUID='Firstname Lastname (username) <firstname.lastname@email.com>'
 gpg --quick-generate-key "$KEYUID" ed25519 cert never
 gpg --quick-add-key KEYFINGERPRINTFROMABOVE ed25519 sign 5y
-git config --local user.signingkey devedge
+git config --local user.signingkey username
 git config --local commit.gpgsign true
 ```
 
-## first things first
+---
 
-The system and version I'm running is:
 
-SoC: Apple M3 Pro
-gpg (GnuPG) 2.4.7
-libgcrypt 1.10.3
+## installation prerequisites
 
-GPG was installed using [Homebrew](https://brew.sh/) (`brew install gnupg`)
+My development environment is a Macbook Pro, so your milage may vary depending on the system you're using. You'll need to install 2 items, `gnupg` and `pinentry`:
 
-To avoid incomprehensible errors like this:
+```bash
+brew install gnupg pinentry-mac
+```
+
+While the first is self-evident, `pinentry` is not - and unfortunately, if it is not installed, the errors you might run into are incomprehensible:
 
 ```
 error: gpg failed to sign the data:
@@ -49,32 +44,49 @@ gpg: signing failed: Inappropriate ioctl for device
 fatal: failed to write commit object
 ```
 
-you need to add this to `~/.gnupg/gpg.conf`:
+From what I have found, the regular TTY is insecure for entering passwords, so GnuPG has developed their own alternative (GnuPG architecture diagram [found here](https://www.gnupg.org/documentation/manuals/gnupg/Component-interaction.html#Component-interaction)). However, I've found a lot of users reporting usability problems with this tool, especially over SSH, so I'll include a section on bypassing it altogether.
+
+### configuring `gnupg` to use `pinentry`
+
+In `~/.gnupg/gpg.conf`:
+
+```
+use-agent
+```
+
+and in `~/.gnupg/gpg-agent.conf`:
+
+```
+pinentry-program /opt/homebrew/bin/pinentry-mac
+```
+
+You can choose to cache it in macOS' Keychain so it does not need to be entered repeatedly.
+
+### bypassing `pinentry` entirely
+
+In `~/.gnupg/gpg.conf`:
 
 ```
 use-agent
 pinentry-mode loopback
 ```
 
-and this to `~/.gnupg/gpg-agent.conf`:
+and in `~/.gnupg/gpg-agent.conf`:
 
 ```
 allow-loopback-pinentry
 ```
 
-And then run:
+These instructions were found online here: [https://d.sb/2016/11/gpg-inappropriate-ioctl-for-device-errors](https://d.sb/2016/11/gpg-inappropriate-ioctl-for-device-errors)
+
+---
+
+And then run the following to let `gpg-agent` pick up the configurations:
 
 ```bash
 echo RELOADAGENT | gpg-connect-agent
 ```
 
-in your terminal to reload the GPG agent. (Thanks to [Daniel15's post](https://d.sb/2016/11/gpg-inappropriate-ioctl-for-device-errors))
-
-Why?
-
-From what I can gather, GPG considers passwords typed over stdin on the CLI to be insecure. Rather than utilizing existing tools such as `sudo`, they wrote their own, `pinentry`. However, instead of making things more secure, this complication and associated incomprehensible error messages drives users to avoid using GPG at all (this is a very common theme with GPG).
-
-You could also install another program, `pinentry-mac`, but this will open up an annoying popup window every single time GPG needs your password. The above solution will force GPG to use your terminal, just like every other application. If you would like to install `pinentry-mac` however, [this blog post is a good starting point](https://velvetcache.org/2023/03/26/a-peek-inside-pinentry/).
 
 ## generating the gpg keys
 
@@ -103,7 +115,7 @@ GPG will then print the new key:
 ```
 pub   ed25519 2024-12-20 [C]
       55BE5089F634003042AE70985E88702C976C97B1
-uid           [ultimate] Firstname Lastname (devedge) <firstname.lastname@email.com>
+uid           [ultimate] Firstname Lastname (username) <firstname.lastname@email.com>
 ```
 
 The `[C]` stands for Certify. Generally, since GPG relies on a 'web of trust' where people hold onto your key for a long time, you want your root level key to rarely expire. It will also have no abilities, existing solely to sign subkeys that you actually use for day-to-day work.
@@ -129,6 +141,7 @@ Adding an encryption key involves a very small change: instead of `ed25519`, you
 gpg --quick-add-key 55BE5089F634003042AE70985E88702C976C97B1 cv25519 encr 5y
 ```
 
+
 ## listing keys
 
 While there's numerous ways to list your keys, I've found that you generally don't need to worry about most of them. Regardless of how many subkeys your GPG key has, referencing either the master key's ID or any part of your UID will allow GPG to pick the appropriate subkey. If you have multiple subkeys with the same function, GPG picks the most recently created one.
@@ -138,12 +151,12 @@ However, here's a few I've found useful:
 The default:
 
 ```
-$ gpg --list-keys devedge
+$ gpg --list-keys username
 [keyboxd]
 ---------
 pub   ed25519 2024-12-20 [C]
       55BE5089F634003042AE70985E88702C976C97B1
-uid           [ultimate] Firstname Lastname (devedge) <firstname.lastname@email.com>
+uid           [ultimate] Firstname Lastname (username) <firstname.lastname@email.com>
 sub   ed25519 2024-12-20 [S] [expires: 2029-12-19]
 sub   cv25519 2024-12-29 [E] [expires: 2029-12-28]
 ```
@@ -151,10 +164,10 @@ sub   cv25519 2024-12-29 [E] [expires: 2029-12-28]
 Same as above, but with the master key ID split into 4-character chunks:
 
 ```
-$ gpg --fingerprint devedge
+$ gpg --fingerprint username
 pub   ed25519 2024-12-20 [C]
       55BE 5089 F634 0030 42AE  7098 5E88 702C 976C 97B1
-uid           [ultimate] Firstname Lastname (devedge) <firstname.lastname@email.com>
+uid           [ultimate] Firstname Lastname (username) <firstname.lastname@email.com>
 sub   ed25519 2024-12-20 [S] [expires: 2029-12-19]
 sub   cv25519 2024-12-29 [E] [expires: 2029-12-28]
 ```
@@ -162,10 +175,10 @@ sub   cv25519 2024-12-29 [E] [expires: 2029-12-28]
 You can also go all-out and list each of the subkey fingerprints:
 
 ```
-$ gpg --list-keys --with-subkey-fingerprints --keyid-format=LONG devedge
+$ gpg --list-keys --with-subkey-fingerprints --keyid-format=LONG username
 pub   ed25519/5E88702C976C97B1 2024-12-20 [C]
       55BE5089F634003042AE70985E88702C976C97B1
-uid                 [ultimate] Firstname Lastname (devedge) <firstname.lastname@email.com>
+uid                 [ultimate] Firstname Lastname (username) <firstname.lastname@email.com>
 sub   ed25519/882630A8E2F9526B 2024-12-20 [S] [expires: 2029-12-19]
       AE9E8E56437D11587FAFE840882630A8E2F9526B
 sub   cv25519/258ADE692963C5B3 2024-12-29 [E] [expires: 2029-12-28]
@@ -175,7 +188,7 @@ sub   cv25519/258ADE692963C5B3 2024-12-29 [E] [expires: 2029-12-28]
 Finally, to export your public key in ASCII plaintext to share, run:
 
 ```
-$ gpg --armor --export devedge
+$ gpg --armor --export username
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 
 mDMEZ2TErhYJKwYBBAHaRw8BAQdAzgjB3r552mWBwNhcdGZ+2G48SnhSoTWr5CzK
@@ -201,8 +214,9 @@ iHAsl2yXsU12AP46i6XmHRcWJY6vMI36F0LLXfe/IyaFNFI28vA4iQeV/AEAvqAi
 Or directly exported to a file:
 
 ```bash
-gpg --armor --export --output devedge.asc devedge
+gpg --armor --export --output username.asc username
 ```
+
 
 ## signing commits with them
 
@@ -218,7 +232,7 @@ To specify your new key for that repository, run one of the following:
 
 ```bash
 # some part of the UID
-git config --local user.signingkey devedge
+git config --local user.signingkey username
 
 # a different example using the email instead
 git config --local user.signingkey firstname.lastname@email.com
