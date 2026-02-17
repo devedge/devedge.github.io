@@ -178,7 +178,7 @@ alias man="LC_CTYPE=C man"
 
 ---
 
-## references
+## resources
 
 - https://www.mankier.com/
 - https://unix.stackexchange.com/questions/762442/whats-the-difference-between-ubuntus-man-and-macoss-man
