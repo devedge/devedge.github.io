@@ -1,8 +1,10 @@
 ---
 title: man man
 tags:
-    - manpage
+  - manpage
+date: 2026-02-16 20:09:59
 ---
+
 
 Manpages are something I've often underutilized, despite how useful they are. After spending some time researching them further, here are some takeaways and modifications that significantly improve my usage.
 
@@ -30,6 +32,8 @@ The most common searches can be done with:
 \*this is technically an anti-pattern that I picked up. Typing a `/` followed by `<CTRL>f` automatically jumps to the top of the page to restart the search while transforming your prompt to look like this:
 
 `First-file /searchpattern<ENTER>`
+
+{% asset_img man-search-top.png %}
 
 Continuing in the vein of more advanced search tricks, a few more are:
 
@@ -113,12 +117,15 @@ However, this immediately opens up the manpage of the first search result, and w
 
 for every single entry, one at a time, looking like this:
 
+{% asset_img man-search.png %}
 
 A bit inconvenient, so I may find a workaround eventually.
 
 ## tldr
 
 Despite all the above, sometimes you don't want to trawl through a manpage for minutes to piece together a comprehensive command, flag-by-flag. In that case, the [`tldr` project](https://tldr.sh/) gives you a short synopsis and a list of example commands instead.
+
+{% asset_img man-tldr.png %}
 
 While the front page instructions recommend installing it through `npm`, thankfully there's a [client written in Rust called `tlrc`](https://github.com/tldr-pages/tlrc). It's available through Homebrew with `brew install tlrc` (be sure to update the `tldr` database with a `tldr -u` before using).
 
@@ -128,9 +135,11 @@ If you've noticed that your `man` does not have a status prompt at the bottom of
 
 Bundled:
 
+{% asset_img man-macos-bsd.png %}
 
 Modern:
 
+{% asset_img man-macos-gnu.png %}
 
 The default version of `man` installed on macOS is frequently out of date and based on BSD. The more modern implementation that is normally seen on Linux machines is not `man`, but [another implementation called `man-db`](https://man-db.gitlab.io/man-db/).
 
@@ -157,7 +166,7 @@ I could validate this by running the following command:
 LC_COLLATE=C LESS='+/[^ -~]' man rsync
 ```
 
-TODO: image
+{% asset_img man-non-ascii.png %}
 
 Every single highlight is a non-ASCII character.
 
