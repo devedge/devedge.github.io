@@ -11,6 +11,8 @@ The current default bootloader for Fedora 43 is still `GRUB`, and I wanted to sw
 
 This guide only shows how to set up `systemd-boot` on a fresh Fedora 43 install, since I had challenges trying to switch from `GRUB` post-installation.
 
+_Note_: Ironically, this method is [broken specifically for Fedora 43](https://bugzilla.redhat.com/show_bug.cgi?id=2402975). A fix [has been merged](https://bodhi.fedoraproject.org/updates/FEDORA-2025-3190649b5c) into the upcoming Fedora 44 release.
+
 Before you even boot into the Fedora ISO of your choosing, the `GRUB` bootloader will flash:
 
 {% asset_img bootloader-picker.png %}
