@@ -1,16 +1,61 @@
 # The URL the site will be built for
 base_url = "https://devedge.github.io"
+title = "devedge"
+description = "Systems Engineer | Astral Projection Enthusiast (CLI-variant)"
+default_language = "en"
+theme = "serene"
+output_dir = "public"
 
 # Whether to automatically compile all Sass files in the sass directory
 compile_sass = true
 
+# Keep this false, as it may cause issues with some styles
+minify_html = false
+
 # Whether to build a search index to be used later on by a JavaScript library
 build_search_index = false
 
+# Whether to generate a feed file in root, read docs for more info about rss feed
+generate_feeds = false
+
+# "feed.xml" | "atom.xml" | "rss.xml", read docs for more info
+feed_filenames = ["feed.xml"]
+taxonomies = [{ name = "tags" }, { name = "categories" }]
+
 [markdown]
+render_emoji = false
+external_links_target_blank = false
+external_links_no_follow = true
+external_links_no_referrer = true
+smart_punctuation = false
+github_alerts = true
 
 [markdown.highlighting]
-theme = "catppuccin-mocha"
+style = "class"
+light_theme = "github-light"
+dark_theme = "github-dark"
+# theme = "catppuccin-mocha"
+
+[slugify]
+paths = "on"
+taxonomies = "on"
+anchors = "on"
 
 [extra]
-# Put all your custom variables here
+sections = [
+  { name = "posts", path = "/posts", is_external = false },
+  { name = "tags", path = "/tags", is_external = false },
+  { name = "pgp", path = "/pgp", is_external = false },
+]
+blog_section_path = "/posts"
+
+back_link_text = "Back" # Text of the back button
+force_theme = false # false | "light" | "dark"
+
+footer_copyright = "© 2015-2026 devedge"
+footer_credits = true # Whether to show "Built with zola and serene" in footer
+
+not_found_error_text = "404 Not Found"
+not_found_recover_text = "« back to home »"
+
+reaction = false # Whether to enable anonymous emoji reactions (Note: You need to set up a working api endpoint to enable this feature)
