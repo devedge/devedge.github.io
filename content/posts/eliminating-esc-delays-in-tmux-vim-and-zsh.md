@@ -1,11 +1,10 @@
----
-title: eliminating ESC delays in tmux, vim and zsh
-tags:
-  - tmux
-  - vim
-  - zsh
-date: 2025-05-09 17:36:40
----
++++
+title = "Eliminating ESC delays in tmux, Vim and ZSH"
+date = "2025-05-09 17:36:40"
+
+[taxonomies]
+tags = ["tmux", "vim", "zsh"]
++++
 
 
 For a while, I had vaguely noticed an odd delay whenever I pressed `ESC` in vim. It was not until I started using vim inside tmux that the delay became very obvious. After some quick research, it turned out this was an intentional feature of both programs (and certainly many more).
@@ -26,7 +25,7 @@ For tmux, this means setting the delay to 5ms in `~/.tmux.conf`:
 set -g escape-time 5
 ```
 
-## vim `timeoutlen`, `ttimeoutlen`
+## Vim `timeoutlen`, `ttimeoutlen`
 
 vim has two settings for controlling delays. However by default, only one, `timeoutlen`, is used to set a delay of 1000ms (1 second) for both mappings and for the delays between escape sequences. Since mappings are deliberate sequences of characters that you (usually) can't start typing in less than 10ms, it makes sense to keep that one at 1000ms (or longer if needed). This leaves us with the second option `ttimeoutlen`, which we can set to a much lower value in `~/.vimrc`:
 
@@ -34,7 +33,7 @@ vim has two settings for controlling delays. However by default, only one, `time
 set timeoutlen=1000 ttimeoutlen=10
 ```
 
-## zsh `KEYTIMEOUT`
+## ZSH `KEYTIMEOUT`
 
 Your shell will also have a delay for escape sequences. Since I use zsh, I set this in my `~/.zshrc` file:
 
@@ -46,9 +45,7 @@ This value is in [hundredths of a second](https://zsh.sourceforge.io/Doc/Release
 
 ---
 
-## resources
+## Resources
 
-- An excellent historical breakdown on the origin of escape sequences:
-    https://unix.stackexchange.com/a/608179
-- Cautionary warning against setting escape delay times to zero:
-    https://superuser.com/a/1809494
+- [An excellent historical breakdown on the origin of escape sequences](https://unix.stackexchange.com/a/608179)
+- [Cautionary warning against setting escape delay times to zero](https://superuser.com/a/1809494)

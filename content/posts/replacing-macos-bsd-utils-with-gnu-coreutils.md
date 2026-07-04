@@ -1,9 +1,10 @@
----
-title: replacing macOS BSD utils with GNU coreutils
-tags:
-  - macOS
-date: 2026-03-14 17:35:40
----
++++
+title = "Replacing macOS BSD utils with GNU coreutils"
+date = "2026-03-14 17:35:40"
+
+[taxonomies]
+tags = ["macOS"]
++++
 
 
 By default, macOS is packaged with the BSD versions of many common CLI utilities such as `grep`, `sed`, `awk`, and more. These are not the same ones that can be found on most Linux distributions, and the slight differences between them can be confusing when working with both systems at the same time.
@@ -11,7 +12,7 @@ By default, macOS is packaged with the BSD versions of many common CLI utilities
 Thankfully, most of these can be installed through Homebrew. There are some caveats, but for the most part, they can be treated as a one-to-one replacement. The `coreutils` package is commonly cited, but over time, I have compiled a larger list of other non-GNU utilities that can be replaced.
 
 
-## installation
+## Installation
 
 The full list of default mac packages that I've replaced are:
 
@@ -35,7 +36,7 @@ brew install \
 ```
 
 
-## configuration
+## Configuration
 
 Since the BSD and GNU utils have the same names, these new utils are usually installed with a `g` prefix. Additionally, their `manpages` may not be properly pointed to the installed application either. As a result, you'll have to redefine the `PATH` and `MANPATH` shell variables for a number of these tools.
 
@@ -96,7 +97,7 @@ export PATH="/opt/homebrew/opt/findutils/libexec/gnubin:$PATH"
 export MANPATH="/opt/homebrew/opt/findutils/libexec/gnuman:$MANPATH"
 ```
 
-The other applications are not as clear. I first added `man`, following the {% post_link man-man#manpages-on-macOS 'guide here' %}. 
+The other applications are not as clear. I first added `man`, following the [guide here](@/posts/man-man.md#manpages-on-macos). 
 
 ```bash
 # man
@@ -209,7 +210,7 @@ export MANPATH="/opt/homebrew/opt/vim/share/man:$MANPATH"
 ```
 
 
-## exclusions
+## Exclusions
 
 There are some notable exclusions from this list of programs. Specifically, `openssh`, `unzip` and `tar`. The reason for this is that the default versions bundled with macOS have been modified to recognize macOS-specific extended attributes/additional functionality, which the GNU versions do not recognize.
 
@@ -228,13 +229,9 @@ I also haven't found a reason to replace the bundled `zsh` as of yet.
 
 ---
 
-## resources
+## Resources
 
-- Older guide for installing `coreutils`:
-    https://www.topbug.net/blog/2013/04/14/install-and-use-gnu-command-line-tools-in-mac-os-x/
-- Stackexchange guide for installing `coreutils`:
-    https://apple.stackexchange.com/a/69332
-- Warning regarding tag preservation failure:
-    https://brettterpstra.com/2014/07/03/mavericks-tags-and-coreutils-a-warning/
-- Good guide on ZSH configuration for macOS:
-    https://scriptingosx.com/2019/06/moving-to-zsh-part-2-configuration-files/
+- [Older guide for installing `coreutils`](https://www.topbug.net/blog/2013/04/14/install-and-use-gnu-command-line-tools-in-mac-os-x/)
+- [Stackexchange guide for installing `coreutils`](https://apple.stackexchange.com/a/69332)
+- [Warning regarding tag preservation failure](https://brettterpstra.com/2014/07/03/mavericks-tags-and-coreutils-a-warning/)
+- [Good guide on ZSH configuration for macOS](https://scriptingosx.com/2019/06/moving-to-zsh-part-2-configuration-files/)

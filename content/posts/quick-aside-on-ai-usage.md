@@ -1,11 +1,10 @@
----
-title: quick aside on AI usage
-tags:
-  - ai
-date: 2026-02-17 18:23:47
----
++++
+title = "Quick aside on AI usage"
+date = "2026-02-17 18:23:47"
 
-
+[taxonomies]
+tags = ["ai"]
++++
 
 It seems that with the ubiquity of AI and its potential to disrupt so many fields, just about every blog has a take on its future. However, this is not what this post will be about. 
 

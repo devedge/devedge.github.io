@@ -1,7 +1,12 @@
----
-title: PGP
-date: 2024-12-29 08:42:05
----
++++
+title = "GPG — devedge"
+description = "GPG key for devedge"
+template = "prose.html"
+
+[extra]
+title = "GPG — devedge"
+copy = true # show copy button in code block
++++
 
 ```
 -----BEGIN PGP PUBLIC KEY BLOCK-----
@@ -26,4 +31,4 @@ iHAsl2yXsU12AP46i6XmHRcWJY6vMI36F0LLXfe/IyaFNFI28vA4iQeV/AEAvqAi
 -----END PGP PUBLIC KEY BLOCK-----
 ```
 
-Download: [devedge.asc](./devedge.asc)
+Download: [devedge.asc](/assets/devedge.asc)

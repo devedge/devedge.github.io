@@ -1,9 +1,10 @@
----
-title: writing tmux scrollback to file
-tags:
-    - tmux
-date: 2025-05-03 22:55:37
----
++++
+title = "Writing tmux scrollback to file"
+date = "2025-05-03 22:55:37"
+
+[taxonomies]
+tags = ["tmux"]
++++
 
 Occasionally, I'll be running a command in tmux that prints a lot of output - then realize midway that I'd like to save it for further inspection (eg., bootloader recompilation errors on system upgrade). 
 
@@ -27,7 +28,7 @@ To use this:
 
 The command automatically calculates the scrollback position and the cursor offset to pick the starting line, and writes everything from that point on downwards to the target file. 
 
-## command breakdown
+## Command breakdown
 
 Bind `S` (capital s) in Vi copy mode & prompt for a filename:
 
@@ -72,9 +73,7 @@ Save the buffer that was just calculated into the filename, using the variable `
 
 ---
 
-## resources
+## Resources
 
-- tmux official Wiki
-    https://github.com/tmux/tmux/wiki
-- tmux Wiki FORMATS
-    https://github.com/tmux/tmux/wiki/Formats
+- [tmux official Wiki](https://github.com/tmux/tmux/wiki)
+- [tmux Wiki FORMATS](https://github.com/tmux/tmux/wiki/Formats)

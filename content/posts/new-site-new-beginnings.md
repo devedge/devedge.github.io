@@ -1,9 +1,10 @@
----
-title: new site, new beginnings
-date: 2024-12-22 17:47:23
-tags:
-    - blog
----
++++
+title = "New site, new beginnings"
+date = "2024-12-22 17:47:23"
+
+[taxonomies]
+tags = ["blog"]
++++
 
 As you may have noticed, this site has a very different look. 
 
@@ -19,7 +20,7 @@ The reason is that this site's purpose has always been threefold:
 
 As a result, they will be molded to better fit these goals.
 
-## what is this running on?
+## What is this running on?
 
 This blog is built using a NodeJS framework called [hexo](https://hexo.io/).
 
@@ -32,7 +33,7 @@ These are:
 - Used [Nord Theme](https://www.nordtheme.com/) as a color reference to create a new color style
 - Designed a new icon/favicon, fitting with a more polar/edge-like theme
 
-## the future
+## The future
 
 There's a lot in store for the future. For starters:
 

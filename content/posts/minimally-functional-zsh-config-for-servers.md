@@ -1,21 +1,20 @@
----
-title: minimally functional zsh config for servers
-tags:
-  - zsh
-  - fedora
-  - systemd
-date: 2026-02-28 22:27:37
----
++++
+title = "Minimally functional ZSH config for servers"
+date = "2026-02-28 22:27:37"
+
+[taxonomies]
+tags = ["zsh", "fedora", "systemd"]
++++
 
 
 As I set up servers, I have a fairly minimal ZSH configuration I like to deploy to keep consistent behavior across all systems. A number of these tweaks make the shell much more usable and modify inconvenient defaults.
 
-ZSH has a massive list of options that can be modified, so for logical clarity, I will be grouping my configs below based on the `manpages` where you can find them. This will make it easier to reference them and find related commands if needed. (If you need a quick refresher on using `manpages`, I have written up {% post_link man-man 'a guide right here' %})
+ZSH has a massive list of options that can be modified, so for logical clarity, I will be grouping my configs below based on the `manpages` where you can find them. This will make it easier to reference them and find related commands if needed. (If you need a quick refresher on using `manpages`, I have written up [a guide right here](@/posts/man-man.md))
 
 _[Jump to the complete `~/.zshrc` config here](#full-zsh-config)_
 
 
-## zshparam
+## `zshparam`
 
 ZSH parameters (`man zshparam`) are the variables that can be set to configure ZSH defaults. I set a default `HISTFILE` filename of `~/.zsh_history` that follows the same convention as Bash's `~/.bash_history`.
 
@@ -27,14 +26,14 @@ HISTSIZE=10000000
 SAVEHIST=$HISTSIZE
 ```
 
-The `KEYTIMEOUT` is set to 1 (10ms) to minimize the `ESC` delay in the shell. I have another post {% post_link eliminating-esc-delays-in-tmux-vim-and-zsh 'that elaborates on this issue' %}:
+The `KEYTIMEOUT` is set to 1 (10ms) to minimize the `ESC` delay in the shell. I have another post [that elaborates on this issue](@/posts/eliminating-esc-delays-in-tmux-vim-and-zsh.md):
 
 ```bash
 KEYTIMEOUT=1
 ```
 
 
-## zshoptions
+## `zshoptions`
 
 ZSH options (`man zshoptions`) are toggles that can be flipped to modify default ZSH behavior. I adjust these to provide a better shell history experience.
 
@@ -78,7 +77,7 @@ unsetopt NOMATCH
 ```
 
 
-## zshcompsys, zshcontrib, zshbuiltins
+## `zshcompsys`, `zshcontrib`, `zshbuiltins`
 
 These are a collection of smaller functions that allow for advanced functionality in ZSH.
 
@@ -108,7 +107,7 @@ alias zhist='fc -lni'
 ```
 
 
-## systemd bonus
+## `systemd` bonus
 
 `systemd` sets some frustrating options when the `less` pager is called (by default, the full list of options passed to `less` are: `FRSXMK` (found in `man systemctl`)).
 
@@ -125,7 +124,7 @@ export SYSTEMD_LESS='FRMK'
 ```
 
 
-## fedora double bonus
+## Fedora double bonus
 
 When I exited an `ssh` session from my Fedora servers, it would clear the entire terminal pane. I didn't like this, since sometimes I was just jumping in to check a quick config option and this would reset my viewport.
 
@@ -135,8 +134,14 @@ After some digging, I found that Fedora sets a default `zlogout` in `/etc/zlogou
 #command -v clear &> /dev/null && clear
 ```
 
+Alternatively, if you only want to disable this behavior for a single user, you can add the following to the local user's `~/.zlogout`:
 
-## full zsh config
+```bash
+setop norcs
+```
+
+
+## Full ZSH config
 
 Here is the full `~/.zshrc` config file, annotated with short comments:
 
@@ -168,11 +173,9 @@ export SYSTEMD_LESS='FRMK'
 
 ---
 
-## resources
+## Resources
 
-- Good reference for many of these options:
-    https://unix.stackexchange.com/a/273863
-- Manpage guide:
-    {% post_link man-man %}
-- Escape Delay post:
-    {% post_link eliminating-esc-delays-in-tmux-vim-and-zsh %}
+- [Good StackExchange reference for many of these options](https://unix.stackexchange.com/a/273863)
+- [Manpage guide](@/posts/man-man.md)
+- [Escape Delay post](@/posts/eliminating-esc-delays-in-tmux-vim-and-zsh.md)
+- [StackExchange post to disable `zlogout` behavior](https://unix.stackexchange.com/a/162897)

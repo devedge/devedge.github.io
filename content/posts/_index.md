@@ -1,5 +1,5 @@
 +++
-title = ""
+title = "Posts — devedge"
 description = ""
 sort_by = "date"
 template = "blog.html"
@@ -11,7 +11,7 @@ generate_feeds = true
 lang = "en"
 
 title = "Posts"
-# subtitle = ""
+subtitle = ""
 
 date_format = "%b %-d, %Y"
 

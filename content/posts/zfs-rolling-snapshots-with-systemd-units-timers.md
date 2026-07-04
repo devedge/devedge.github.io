@@ -1,17 +1,17 @@
----
-title: zfs rolling snapshots with systemd units + timers
-tags:
-  - zfs
-  - systemd
-date: 2025-07-06 19:49:33
----
++++
+title = "ZFS rolling snapshots with systemd units + timers"
+date = "2025-07-06 19:49:33"
+
+[taxonomies]
+tags = ["zfs", "systemd"]
++++
 
 
 As a copy-on-write filesystem, ZFS provides the capability to take snapshots. However, taking and managing them is completely manual, so maintaining a rolling list of snapshots requires either custom bash scripts + cron, installing external tools such as sanoid, or using an entire OS in the case of TrueNAS.
 
 However, this functionality can be easily achieved by utilizing systemd units and timers.
 
-## unit file
+## Unit file
 
 The goal of this unit file is to keep a week's worth of daily snapshots. Each snapshot is named in a way that is easily referenced:
 
@@ -52,7 +52,7 @@ The filename format of the unit file is:
 zfs-autosnapshot-<number of retained snapshots>-<frequency>@.service
 ```
 
-### zfs-autosnapshot-7-daily@.service
+### `zfs-autosnapshot-7-daily@.service`:
 
 ```ini
 [Unit]
@@ -79,11 +79,11 @@ ExecStart=/sbin/zfs snapshot %I@autosnapshot-1-day-ago
 
 The remainder of the directives were taken from the `zfs-scrub@.service` bundled along with the ZFS installation on Fedora 41. No `[Install]` section is required since this unit file will be triggered by a timer.
 
-## timer file
+## Timer file
 
 The timer is even simpler, with the only customization being the `OnCalendar` directive set to `daily`:
 
-### zfs-autosnapshot-7-daily@.timer
+### `zfs-autosnapshot-7-daily@.timer`:
 
 ```ini
 [Unit]
@@ -97,7 +97,7 @@ Unit=zfs-autosnapshot-7-daily@%i.service
 WantedBy=timers.target
 ```
 
-## enabling the service
+## Enabling the service
 
 There's a gotcha when trying to pass the full ZFS pool+dataset(s) path to the timer as an instance variable: a ZFS path contains invalid characters that can't be passed on the command line - namely, forward slashes and dashes (`/`, `-`).
 

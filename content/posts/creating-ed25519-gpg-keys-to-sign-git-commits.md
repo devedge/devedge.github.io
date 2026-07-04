@@ -1,9 +1,10 @@
----
-title: creating ed25519 gpg keys to sign git commits
-date: 2024-12-27 16:14:30
-tags:
-    - gpg
----
++++
+title = "Creating ED25519 GPG keys to sign Git commits"
+date = "2024-12-27 16:14:30"
+
+[taxonomies]
+tags = ["gpg", "git"]
++++
 
 Git provides the ability to sign your commits with a GPG key. I felt this could be a fun thing to start doing, and since I've had trouble finding simple guides for doing this specifically with ed25519 keys, I'm writing my own.
 
@@ -22,7 +23,7 @@ git config --local commit.gpgsign true
 ---
 
 
-## installation prerequisites
+## Installation prerequisites
 
 My development environment is a Macbook Pro, so your milage may vary depending on the system you're using. You'll need to install 2 items, `gnupg` and `pinentry`:
 
@@ -46,7 +47,7 @@ fatal: failed to write commit object
 
 From what I have found, the regular TTY is insecure for entering passwords, so GnuPG has developed their own alternative (GnuPG architecture diagram [found here](https://www.gnupg.org/documentation/manuals/gnupg/Component-interaction.html#Component-interaction)). However, I've found a lot of users reporting usability problems with this tool, especially over SSH, so I'll include a section on bypassing it altogether.
 
-### configuring `gnupg` to use `pinentry`
+### Configuring `gnupg` to use `pinentry`
 
 In `~/.gnupg/gpg.conf`:
 
@@ -62,7 +63,7 @@ pinentry-program /opt/homebrew/bin/pinentry-mac
 
 You can choose to cache it in macOS' Keychain so it does not need to be entered repeatedly.
 
-### bypassing `pinentry` entirely
+### Bypassing `pinentry` entirely
 
 In `~/.gnupg/gpg.conf`:
 
@@ -88,11 +89,11 @@ echo RELOADAGENT | gpg-connect-agent
 ```
 
 
-## generating the gpg keys
+## Generating the GPG keys
 
 Many guides still show how to generate RSA keys. However, the modern alternative for a while has been ED25519. To use it, run:
 
-### master key
+### Master key
 
 ```bash
 gpg --quick-generate-key '<User ID>' ed25519 cert never
@@ -120,7 +121,7 @@ uid           [ultimate] Firstname Lastname (username) <firstname.lastname@email
 
 The `[C]` stands for Certify. Generally, since GPG relies on a 'web of trust' where people hold onto your key for a long time, you want your root level key to rarely expire. It will also have no abilities, existing solely to sign subkeys that you actually use for day-to-day work.
 
-### signing key
+### Signing key
 
 The signing key is a subkey of the master key, and they are both logically considered part of the same GPG key.
 
@@ -142,7 +143,7 @@ gpg --quick-add-key 55BE5089F634003042AE70985E88702C976C97B1 cv25519 encr 5y
 ```
 
 
-## listing keys
+## Listing keys
 
 While there's numerous ways to list your keys, I've found that you generally don't need to worry about most of them. Regardless of how many subkeys your GPG key has, referencing either the master key's ID or any part of your UID will allow GPG to pick the appropriate subkey. If you have multiple subkeys with the same function, GPG picks the most recently created one.
 
@@ -218,7 +219,7 @@ gpg --armor --export --output username.asc username
 ```
 
 
-## signing commits with them
+## Signing commits with them
 
 A good idea to ensure you never forget to sign commits is to run the command:
 
@@ -258,15 +259,10 @@ If you want to use this key globally for every repository on your machine, repla
 
 ---
 
-## resources
+## Resources
 
-- Git guide to signing your work: 
-    https://git-scm.com/book/en/v2/Git-Tools-Signing-Your-Work
-- Github guide to using your GPG key with Github:
-    https://docs.github.com/en/authentication/managing-commit-signature-verification/generating-a-new-gpg-key
-- Fixing GPG "Inappropriate ioctl for device" errors:
-    https://d.sb/2016/11/gpg-inappropriate-ioctl-for-device-errors
-- Guide for `pinentry-mac`:
-    https://velvetcache.org/2023/03/26/a-peek-inside-pinentry/
-- Another article covering a slightly different solution to signing commits over ssh:
-    https://ertt.ca/blog/2022/01-10-git-gpg-ssh/
+- [Git guide to signing your work](https://git-scm.com/book/en/v2/Git-Tools-Signing-Your-Work)
+- [Github guide to using your GPG key with Github](https://docs.github.com/en/authentication/managing-commit-signature-verification/generating-a-new-gpg-key)
+- [Fixing GPG "Inappropriate ioctl for device" errors](https://d.sb/2016/11/gpg-inappropriate-ioctl-for-device-errors)
+- [Guide for `pinentry-mac`](https://velvetcache.org/2023/03/26/a-peek-inside-pinentry/)
+- [Another article covering a slightly different solution to signing commits over ssh](https://ertt.ca/blog/2022/01-10-git-gpg-ssh/)

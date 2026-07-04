@@ -1,16 +1,16 @@
----
-title: zfs local replication with systemd units + timers
-tags:
-  - zfs
-  - systemd
-date: 2025-07-09 19:39:21
----
++++
+title = "ZFS local replication with systemd units + timers"
+date = "2025-07-09 19:39:21"
+
+[taxonomies]
+tags = ["zfs", "systemd"]
++++
 
 
-Following up the previous post on {% post_link zfs-rolling-snapshots-with-systemd-units-timers creating rolling ZFS snapshots with systemd units & timers %}, this entry will cover continuous replication of these snapshots to another pool on the same host, using the same strategy.
+Following up the previous post on [creating rolling ZFS snapshots with systemd units & timers](@/posts/zfs-rolling-snapshots-with-systemd-units-timers.md), this entry will cover continuous replication of these snapshots to another pool on the same host, using the same strategy.
 
 
-## unit file
+## Unit file
 
 The unit file relies on snapshots having a consistent naming scheme. The names here are the ones defined in the the previous post:
 
@@ -47,7 +47,7 @@ The filename format of the unit file is:
 zfs-autoreplication-<dataset name>-<number of retained snapshots>-<frequency>.service
 ```
 
-### zfs-autoreplication-dataset2-7-daily.service
+### `zfs-autoreplication-dataset2-7-daily.service`:
 
 ```ini
 [Unit]
@@ -74,11 +74,11 @@ ExecStart=/usr/bin/sh -c "zfs send --raw --props -i @autosnapshot-2-days-ago ${R
 ```
 
 
-## timer file
+## Timer file
 
 The timer is very simple. The `OnCalendar` directive is set to 5 minutes after midnight, allowing the autosnapshot service plenty of time to complete first.
 
-### zfs-autoreplication-dataset2-7-daily.timer
+### `zfs-autoreplication-dataset2-7-daily.timer`:
 
 ```ini
 [Unit]
@@ -93,7 +93,7 @@ WantedBy=timers.target
 ```
 
 
-## enabling the service
+## Enabling the service
 
 Unlike the autosnapshot service, the autoreplication service requires some manual preliminary setup. 
 
@@ -116,3 +116,5 @@ Finally, the autoreplication service + timer can be started:
 ```bash
 sudo systemctl enable --now zfs-autoreplication-dataset2-7-daily.timer
 ```
+
+---

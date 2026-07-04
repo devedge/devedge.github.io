@@ -1,17 +1,16 @@
----
-title: prometheus node_exporter on fedora
-tags:
-  - prometheus
-  - fedora
-  - selinux
-date: 2025-05-12 23:08:58
----
++++
+title = "Prometheus node_exporter on Fedora"
+date = "2025-05-12 23:08:58"
+
+[taxonomies]
+tags = ["prometheus", "fedora", "selinux"]
++++
 
 Prometheus provides a server-level metrics exporter [called `node_exporter`](https://prometheus.io/docs/guides/node-exporter/) that reports hardware & kernel-level metrics. However, I found the container deployment method in Docker to be too extreme, and there was no clear documentation for setting it up manually or any officially supported package on Fedora.
 
 Other unofficial online resources didn't mention working with SELinux or firewalld, so this guide outlines how to set up a basic `node_exporter` daemon on a Fedora 41 server.
 
-## download and extraction
+## Download and extraction
 
 Fairly straightforward, find your appropriate version [on the downloads page](https://prometheus.io/download/#node_exporter) and download it:
 
@@ -25,7 +24,7 @@ and extract it:
 tar -xvf node_exporter-1.9.1.linux-amd64.tar.gz
 ```
 
-## user creation and manual installation
+## User creation and manual installation
 
 Manual installation involves moving the executable to the `/usr/local/bin/` directory, which [is specifically for programs](https://en.wikipedia.org/wiki/Unix_filesystem#Conventional_directory_layout) that normal users can run.
 
@@ -40,7 +39,7 @@ sudo useradd -rs /sbin/nologin node_exporter
 sudo chown node_exporter:node_exporter /usr/local/bin/node_exporter
 ```
 
-## systemd unit file
+## Systemd unit file
 
 Create the systemd unit file at `/etc/systemd/system/node_exporter.service`:
 
@@ -96,7 +95,7 @@ In this case, SELinux is in `targeted` mode rather than `MLS` mode, so `unconfin
 unconfined_u:object_r:bin_t:s0 node_exporter
 ```
 
-## open firewall port
+## Open firewall port
 
 If `firewalld` is enabled and running (the default), you will need to open its port to query the metrics from another host.
 
@@ -114,7 +113,7 @@ sudo firewall-cmd --zone=public --add-port=9100/tcp --permanent
 sudo firewall-cmd --reload
 ```
 
-## start `node_exporter` and test
+## Start `node_exporter` and test
 
 Enable and start `node_exporter` in one line:
 
@@ -154,7 +153,6 @@ go_goroutines 7
 
 ---
 
-## resources
+## Resources
 
-- Prometheus Node Exporter home page:
-    https://prometheus.io/docs/guides/node-exporter/
+- [Prometheus Node Exporter home page](https://prometheus.io/docs/guides/node-exporter/)
