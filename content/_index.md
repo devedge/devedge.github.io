@@ -14,7 +14,7 @@ bio = "Systems Engineer | Astral Projection Enthusiast (CLI-variant)"
 # avatar = "img/devedge.svg"
 links = [
     { name = "GitHub", icon = "github", url = "https://github.com/devedge" },
-    { name = "LinkedIn", icon = "linkedin", url = "https://linkedin.com/richardp02" }
+    { name = "LinkedIn", icon = "linkedin", url = "https://linkedin.com/in/richardp02" }
 ]
 
 # Show a few recent posts in home page
