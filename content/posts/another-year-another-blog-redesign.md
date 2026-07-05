@@ -11,7 +11,7 @@ After a lot of consideration, I've gone ahead and switched out both the backend 
 
 - The monospace font for the [`Cactus` theme](https://github.com/probberechts/hexo-theme-cactus) was honestly hard to read. Additionally, the mobile layout had poor padding.
 - Configuration of the theme involved managing 2 different config files, which quickly became convoluted.
-- There was no auto-dark mode for `Cactus`, and I was not particularly interested in trying to design and configure it.
+- There was no auto-dark mode for `Cactus`, and I was not particularly interested in trying to design and configure one.
 - The theme was not self-contained, and was loading 5 different minified JS scripts through Cloudflare.
 - The [`hexo` backend](https://hexo.io/) was excessive for what was essentially a collection of static webpages. It required 10 NPM packages, installing nearly 60Mb of dependencies (the theme was another 12Mb).
 - To run `hexo`, I had to install a NodeJS runtime and a specific version of NPM, which I was doing with NVM ([Node Version Manager](https://github.com/nvm-sh/nvm)). Sourcing this in my `zshrc` was so bloated it was taking seconds to load my shell, which is a [known problem](https://superuser.com/a/1611283).
@@ -26,7 +26,7 @@ This project hits all the points in my wishlist:
 - Built-in, easy to use templating engine that can transpile Markdown into HTML
 - Can compile Sass into CSS
 
-I also found a theme that also looks much better on both mobile and on desktop: [Serene](https://github.com/isunjn/serene)
+I also found a theme that looks much better on both mobile and on desktop: [Serene](https://github.com/isunjn/serene)
 
 - It has an auto-dark mode theme that looks nice
 - Padding is significantly better

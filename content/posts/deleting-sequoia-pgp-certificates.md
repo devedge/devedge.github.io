@@ -9,7 +9,7 @@ tags = ["macOS", "gpg"]
 
 If you have been messing around with the potential GPG replacement command-line tool [Sequoia-PGP](https://sequoia-pgp.org/), you may have noticed that there doesn't appear to be a way to delete 'certs' from the certificate store.
 
-After spending some time digging in the manpages and documentation with no clarification, it appears that this isn't a mistake but a matter of opinion. The developers treat the certificate store as a completely intentional append-only list, and an issue created about this has been [left open for 3 years](https://gitlab.com/sequoia-pgp/pgp-cert-d/-/work_items/33).
+After spending some time digging in the manpages and documentation with no clarification, it appears that this isn't a mistake but a matter of opinion. The developers treat the certificate store as a completely intentional append-only list, and an issue created about this was [closed as "won't complete" 3 years ago](https://gitlab.com/sequoia-pgp/pgp-cert-d/-/work_items/33).
 
 This means that if you were experimenting with creating/deleting keys and certs or importing external certs, your certificate store will become littered with unused or broken certs with no possibility to clean it up (this could even be considered a privacy risk, since the default stance is to automatically "hide" them from users).
 
