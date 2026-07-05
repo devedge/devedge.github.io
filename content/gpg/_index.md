@@ -1,5 +1,5 @@
 +++
-title = "GPG — devedge"
+title = "GPG"
 description = "GPG key for devedge"
 template = "prose.html"
 

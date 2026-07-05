@@ -1,5 +1,5 @@
 +++
-title = "Posts — devedge"
+title = "Posts"
 description = ""
 sort_by = "date"
 template = "blog.html"

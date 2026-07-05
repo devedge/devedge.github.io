@@ -86,7 +86,7 @@ There is more you can do with marks, but I haven't found them particularly helpf
 - `<ESC>ma` - clears the mark `a`
 - `--save‐marks` - when specified in the `less` options, this saves the marks even when you close the file
 
-## Searching cli flags
+## Searching CLI flags
 
 This following configuration has become invaluable for me on a daily basis. I find myself constantly searching for CLI flags (eg., `-f`) and getting results somewhere in the middle of an explanation section instead of the actual flag. A user on StackOverflow provided an [excellent solution](https://superuser.com/a/1731762) to this problem.
 
