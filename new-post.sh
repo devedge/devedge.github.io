@@ -3,6 +3,8 @@
 set -euo pipefail
 
 # Create a new post and automatically slugify the Markdown file
+
+# The post title is passed as the first argument, in quotes
 POST_TITLE="$1"
 
 # Create the URL slug:
@@ -20,13 +22,16 @@ POST_FILENAME="$(
 
 POST_PATH="content/posts/${POST_FILENAME}.md"
 
+# Print the generated slug and it's path
+# TODO: Some way to create an assets directory with the same name
 echo "Slug: $POST_FILENAME"
 echo "Path: $POST_PATH"
 
-echo "
-+++
+
+# Create the post and insert the header. The date can be updated using "update-post-date.sh"
+echo "+++
 title = \"$POST_TITLE\"
-date = \"2999-99-99 00:00:00\"
+date = \"9999-01-01 00:00:00\"
 
 [taxonomies]
 tags = [\"DRAFT\"]
