@@ -22,7 +22,7 @@ POST_FILENAME="$(
 
 POST_PATH="content/posts/${POST_FILENAME}.md"
 
-# Print the generated slug and it's path
+# Print the generated slug and its path
 # TODO: Some way to create an assets directory with the same name
 echo "Slug: $POST_FILENAME"
 echo "Path: $POST_PATH"

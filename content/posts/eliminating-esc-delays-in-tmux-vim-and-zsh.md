@@ -9,7 +9,7 @@ tags = ["tmux", "vim", "zsh"]
 
 For a while, I had vaguely noticed an odd delay whenever I pressed `ESC` in vim. It was not until I started using vim inside tmux that the delay became very obvious. After some quick research, it turned out this was an intentional feature of both programs (and certainly many more).
 
-To cut a long story short, a number of key sequences that your keyboard transmits are actually a combination of `ESC` and a letter on your keyboard for historical reasons (known as an [`escape squence`](https://en.wikipedia.org/wiki/ANSI_escape_code)). As a result, older computers could have trouble telling the difference between them and a really fast typist. Programs such as tmux and vim get around this by adding an artifical delay any time the `ESC` key is pressed, so it remains slower then when it is used as an escape sequence.
+To cut a long story short, a number of key sequences that your keyboard transmits are actually a combination of `ESC` and a letter on your keyboard for historical reasons (known as an [`escape sequence`](https://en.wikipedia.org/wiki/ANSI_escape_code)). As a result, older computers could have trouble telling the difference between them and a really fast typist. Programs such as tmux and vim get around this by adding an artifical delay any time the `ESC` key is pressed, so it remains slower then when it is used as an escape sequence.
 
 Of course, these limitations rarely apply to modern computers anymore. Unless you're on a network connection with crazy latency, this is not an issue. The following are the settings to adjust in tmux, vim, and zsh to reduce this delay:
 

@@ -12,6 +12,30 @@ Following up the previous post on [creating rolling ZFS snapshots with systemd u
 
 ## Unit file
 
+```ini,name=zfs-autoreplication-dataset2-7-daily.service
+[Unit]
+Description=Keep 7 rotating daily snapshots of pool-1/dataset2 replicated to pool-2
+Requires=zfs.target
+After=zfs.target
+ConditionACPower=true
+ConditionPathIsDirectory=/sys/module/zfs
+ConditionPathExists=!/home/gadget/pause-replications
+
+[Service]
+EnvironmentFile=-/etc/sysconfig/zfs
+Type=exec
+Environment="REPLICATION_SOURCE=pool-1/dataset2"
+Environment="REPLICATION_TARGET=pool-2/backups/pool-1/dataset2"
+ExecStartPre=-/sbin/zfs destroy ${REPLICATION_TARGET}@autosnapshot-7-days-ago
+ExecStartPre=-/sbin/zfs rename ${REPLICATION_TARGET}@autosnapshot-6-days-ago ${REPLICATION_TARGET}@autosnapshot-7-days-ago
+ExecStartPre=-/sbin/zfs rename ${REPLICATION_TARGET}@autosnapshot-5-days-ago ${REPLICATION_TARGET}@autosnapshot-6-days-ago
+ExecStartPre=-/sbin/zfs rename ${REPLICATION_TARGET}@autosnapshot-4-days-ago ${REPLICATION_TARGET}@autosnapshot-5-days-ago
+ExecStartPre=-/sbin/zfs rename ${REPLICATION_TARGET}@autosnapshot-3-days-ago ${REPLICATION_TARGET}@autosnapshot-4-days-ago
+ExecStartPre=-/sbin/zfs rename ${REPLICATION_TARGET}@autosnapshot-2-days-ago ${REPLICATION_TARGET}@autosnapshot-3-days-ago
+ExecStartPre=-/sbin/zfs rename ${REPLICATION_TARGET}@autosnapshot-1-day-ago ${REPLICATION_TARGET}@autosnapshot-2-days-ago
+ExecStart=/usr/bin/sh -c "zfs send --raw --props -i @autosnapshot-2-days-ago ${REPLICATION_SOURCE}@autosnapshot-1-day-ago | zfs receive -Fv ${REPLICATION_TARGET}"
+```
+
 The unit file relies on snapshots having a consistent naming scheme. The names here are the ones defined in the the previous post:
 
 ```
@@ -47,40 +71,11 @@ The filename format of the unit file is:
 zfs-autoreplication-<dataset name>-<number of retained snapshots>-<frequency>.service
 ```
 
-### `zfs-autoreplication-dataset2-7-daily.service`:
-
-```ini
-[Unit]
-Description=Keep 7 rotating daily snapshots of pool-1/dataset2 replicated to pool-2
-Requires=zfs.target
-After=zfs.target
-ConditionACPower=true
-ConditionPathIsDirectory=/sys/module/zfs
-ConditionPathExists=!/home/gadget/pause-replications
-
-[Service]
-EnvironmentFile=-/etc/sysconfig/zfs
-Type=exec
-Environment="REPLICATION_SOURCE=pool-1/dataset2"
-Environment="REPLICATION_TARGET=pool-2/backups/pool-1/dataset2"
-ExecStartPre=-/sbin/zfs destroy ${REPLICATION_TARGET}@autosnapshot-7-days-ago
-ExecStartPre=-/sbin/zfs rename ${REPLICATION_TARGET}@autosnapshot-6-days-ago ${REPLICATION_TARGET}@autosnapshot-7-days-ago
-ExecStartPre=-/sbin/zfs rename ${REPLICATION_TARGET}@autosnapshot-5-days-ago ${REPLICATION_TARGET}@autosnapshot-6-days-ago
-ExecStartPre=-/sbin/zfs rename ${REPLICATION_TARGET}@autosnapshot-4-days-ago ${REPLICATION_TARGET}@autosnapshot-5-days-ago
-ExecStartPre=-/sbin/zfs rename ${REPLICATION_TARGET}@autosnapshot-3-days-ago ${REPLICATION_TARGET}@autosnapshot-4-days-ago
-ExecStartPre=-/sbin/zfs rename ${REPLICATION_TARGET}@autosnapshot-2-days-ago ${REPLICATION_TARGET}@autosnapshot-3-days-ago
-ExecStartPre=-/sbin/zfs rename ${REPLICATION_TARGET}@autosnapshot-1-day-ago ${REPLICATION_TARGET}@autosnapshot-2-days-ago
-ExecStart=/usr/bin/sh -c "zfs send --raw --props -i @autosnapshot-2-days-ago ${REPLICATION_SOURCE}@autosnapshot-1-day-ago | zfs receive -Fv ${REPLICATION_TARGET}"
-```
-
-
 ## Timer file
 
 The timer is very simple. The `OnCalendar` directive is set to 5 minutes after midnight, allowing the autosnapshot service plenty of time to complete first.
 
-### `zfs-autoreplication-dataset2-7-daily.timer`:
-
-```ini
+```ini,name=zfs-autoreplication-dataset2-7-daily.timer
 [Unit]
 Description=Keep 7 rotating daily snapshots of pool-1/dataset2 replicated to pool-2
 
@@ -91,7 +86,6 @@ Unit=zfs-autoreplication-dataset2-7-daily.service
 [Install]
 WantedBy=timers.target
 ```
-
 
 ## Enabling the service
 
@@ -116,5 +110,3 @@ Finally, the autoreplication service + timer can be started:
 ```bash
 sudo systemctl enable --now zfs-autoreplication-dataset2-7-daily.timer
 ```
-
----

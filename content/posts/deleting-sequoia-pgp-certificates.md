@@ -72,8 +72,9 @@ Keystore:
 
 Navigate to these directories and delete everything. You can confirm that this worked by running `sq cert list` and `sq key list` - no keys or certificates should show up.
 
-_Note: if you have GNUPG set up, Sequoia-PGP will automatically pick up keys in the `~/.gnupd/` directory_
-
+{% note(title="Note") %}
+If you have GNUPG set up, Sequoia-PGP will automatically pick up keys in the `~/.gnupd/` directory
+{% end %}
 
 ## Re-import keys & certs
 
@@ -90,5 +91,3 @@ sq cert import examplename.cert.asc
 A clunky workaround that was proposed in the above GitLab issue was creating a temporary configuration directory. By setting the `SEQUOIA_HOME` variable to this temporary directory (eg., with `export SEQUOIA_HOME=$HOME/.tmp-sequoia-data`), you can delete the directory later. 
 
 Ultimately however, this isn't a real solution to proper certificate management, so GnuPG will remain my default choice for now.
-
----

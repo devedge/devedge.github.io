@@ -13,6 +13,29 @@ However, this functionality can be easily achieved by utilizing systemd units an
 
 ## Unit file
 
+```ini,name=zfs-autosnapshot-7-daily@.service
+[Unit]
+Description=Keep 7 rotating snapshots of %I daily
+Requires=zfs.target
+After=zfs.target
+ConditionACPower=true
+ConditionPathIsDirectory=/sys/module/zfs
+ConditionPathExists=!/home/gadget/pause-snapshots
+
+[Service]
+EnvironmentFile=-/etc/sysconfig/zfs
+Type=exec
+Restart=no
+ExecStartPre=-/sbin/zfs destroy %I@autosnapshot-7-days-ago
+ExecStartPre=-/sbin/zfs rename %I@autosnapshot-6-days-ago %I@autosnapshot-7-days-ago
+ExecStartPre=-/sbin/zfs rename %I@autosnapshot-5-days-ago %I@autosnapshot-6-days-ago
+ExecStartPre=-/sbin/zfs rename %I@autosnapshot-4-days-ago %I@autosnapshot-5-days-ago
+ExecStartPre=-/sbin/zfs rename %I@autosnapshot-3-days-ago %I@autosnapshot-4-days-ago
+ExecStartPre=-/sbin/zfs rename %I@autosnapshot-2-days-ago %I@autosnapshot-3-days-ago
+ExecStartPre=-/sbin/zfs rename %I@autosnapshot-1-day-ago %I@autosnapshot-2-days-ago
+ExecStart=/sbin/zfs snapshot %I@autosnapshot-1-day-ago
+```
+
 The goal of this unit file is to keep a week's worth of daily snapshots. Each snapshot is named in a way that is easily referenced:
 
 ```
@@ -52,40 +75,13 @@ The filename format of the unit file is:
 zfs-autosnapshot-<number of retained snapshots>-<frequency>@.service
 ```
 
-### `zfs-autosnapshot-7-daily@.service`:
-
-```ini
-[Unit]
-Description=Keep 7 rotating snapshots of %I daily
-Requires=zfs.target
-After=zfs.target
-ConditionACPower=true
-ConditionPathIsDirectory=/sys/module/zfs
-ConditionPathExists=!/home/gadget/pause-snapshots
-
-[Service]
-EnvironmentFile=-/etc/sysconfig/zfs
-Type=exec
-Restart=no
-ExecStartPre=-/sbin/zfs destroy %I@autosnapshot-7-days-ago
-ExecStartPre=-/sbin/zfs rename %I@autosnapshot-6-days-ago %I@autosnapshot-7-days-ago
-ExecStartPre=-/sbin/zfs rename %I@autosnapshot-5-days-ago %I@autosnapshot-6-days-ago
-ExecStartPre=-/sbin/zfs rename %I@autosnapshot-4-days-ago %I@autosnapshot-5-days-ago
-ExecStartPre=-/sbin/zfs rename %I@autosnapshot-3-days-ago %I@autosnapshot-4-days-ago
-ExecStartPre=-/sbin/zfs rename %I@autosnapshot-2-days-ago %I@autosnapshot-3-days-ago
-ExecStartPre=-/sbin/zfs rename %I@autosnapshot-1-day-ago %I@autosnapshot-2-days-ago
-ExecStart=/sbin/zfs snapshot %I@autosnapshot-1-day-ago
-```
-
 The remainder of the directives were taken from the `zfs-scrub@.service` bundled along with the ZFS installation on Fedora 41. No `[Install]` section is required since this unit file will be triggered by a timer.
 
 ## Timer file
 
 The timer is even simpler, with the only customization being the `OnCalendar` directive set to `daily`:
 
-### `zfs-autosnapshot-7-daily@.timer`:
-
-```ini
+```ini,name=zfs-autosnapshot-7-daily@.timer
 [Unit]
 Description=Keep 7 rotating snapshots of %I daily
 

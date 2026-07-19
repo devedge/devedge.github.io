@@ -134,13 +134,14 @@ This generates a Sign-only (`sign`) `ed25519` key that expires in 5 years (`5y`)
 
 To continue signing after this time has passed, you'll need to generate a new subkey again with the master key. The idea behind this is that if you've had your key copied/stolen somehow, it can't be used forever.
 
-#### _Note on ed25519 encryption_
+{% tip(title="Tip") %}
 
 Adding an encryption key involves a very small change: instead of `ed25519`, you'll need to specify `cv25519` for the encryption algorithm:
 
 ```bash
 gpg --quick-add-key 55BE5089F634003042AE70985E88702C976C97B1 cv25519 encr 5y
 ```
+{% end %}
 
 
 ## Listing keys
