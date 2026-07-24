@@ -3,7 +3,7 @@ title = "Switching Fedora bootloader to systemd-boot"
 date = "2026-02-22 12:30:03"
 
 [taxonomies]
-tags = ["fedora", "systemd"]
+tags = ["fedora", "systemd", "systemd-boot"]
 +++
 
 

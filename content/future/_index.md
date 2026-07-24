@@ -15,7 +15,7 @@ My future/in-progress projects are rapidly growing faster than I can create Git 
 - Flatcar setup and management on libvirt/KVM/QEMU
 - Multi-server overlay network using OVN and OvS
 - SELinux with MLS enforcement
-- systemd unit file hardening with prometheus_exporter
+- systemd unit file hardening with node_exporter
 - TimeMachine backups to ZFS on Fedora
 - systemd: Requires vs. Wants vs. Before/After
 - SSH FDE unlocking using dracut-sshd

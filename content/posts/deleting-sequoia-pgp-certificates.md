@@ -3,7 +3,7 @@ title = "Deleting Sequoia-PGP certificates"
 date = "2026-05-21 00:51:02"
 
 [taxonomies]
-tags = ["macOS", "gpg"]
+tags = ["macOS", "gpg", "sequoia-pgp"]
 +++
 
 

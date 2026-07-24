@@ -3,7 +3,7 @@ title = "Replacing macOS BSD utils with GNU coreutils"
 date = "2026-03-14 17:35:40"
 
 [taxonomies]
-tags = ["macOS"]
+tags = ["macOS", "coreutils"]
 +++
 
 
